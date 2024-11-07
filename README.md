@@ -8,7 +8,7 @@ The method has been published previously:
 Contained within is a complete script for Matlab, as well as the parameters necessary to describe the parent states of the following phytochromes:
 WT = wildtype
 
-Bathy:
+Bathy
     - Pseudomonas aeruginosa WT
     - Agrobacterium tumefaciens 2 WT
     - Agrobacterium tumefaciens D783N variant
