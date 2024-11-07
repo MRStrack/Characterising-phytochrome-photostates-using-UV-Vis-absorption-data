@@ -1,17 +1,22 @@
-This file contains a script that allows the user to determine the amounts of Pfr (15E) and Pr (15Z) in a phytochrome sample using the data obtained via UV/Vis absorption spectroscopy. 
-The data from the Q-band region
+This file contains a script that allows the user to determine the amounts of Pfr (15E) and Pr (15Z) in a microbial phytochrome sample using the data obtained via UV/Vis absorption spectroscopy. 
+
+The complex, multi-step photocycle of phytochromes can be simplified into a system of two species (Pfr and Pr) and three rates: the rate of product formation for both species, and the mono-directional rate of dark reversion. Is the illumination intensity high enough, the rate of dark reversion becomes negligible in comparison to the photochemical rates; this is the desired experimental condition. A photochemical equilibrium, or photostate, can then be understood as a mixture of Pfr and Pr. 
+
+To describe experimental data, we have first created individual functions for the parent states (a sum of Gaussians). These are then implemented into the fit function proper, which considers the Q-band absorption to be a superposition of the parent states. The script calculates the value of alpha, the amount of Pfr in the sample, and thus characterises the photostate.
+
 The method has been published previously:
 
 	Darkness inhibits autokinase activity of bacterial bathy phytochromes
- 	Huber, Christina et al.
+	Huber, Christina et al.
 	Journal of Biological Chemistry, Volume 300, Issue 4, 107148
-    DOI:  10.1016/j.jbc.2024.107148
+	DOI:  10.1016/j.jbc.2024.107148
 
 A step by step guide is additionally provided in:
 
 	WINKLER CHAPTER
 
 Contained within is a complete script for Matlab, as well as the parameters necessary to describe the parent states of the following phytochromes:
+
 WT = wildtype
 
 - Bathy:
