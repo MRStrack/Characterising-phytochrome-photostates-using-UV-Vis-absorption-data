@@ -1,25 +1,31 @@
-clear all
-
 % Documentation: Nonlinear least-squares solver:
 % https://de.mathworks.com/help/optim/ug/lsqcurvefit.html 
 % Kappa als Fitparameter - nicht mehr über isosbestischen Punkt !!
-%%          ##----- DATEN EINLESEN -----##
-A = readmatrix('FL_Pr_Ohne_UG.txt');
 
-% x-Achse in Wellenzahlen, entnommen der ersten Spalte der txt-Datei
+%%          ##----- INPUT DATA -----##
+A = readmatrix('filename.txt');
+
+% Define variable x as wavenumber vector (e.g. 1st column of your matrix)
 x = A(:,1);
-x = rmmissing(x);
-x = 10^7./x; % Das hier verwenden, falls in Wellenlänge
+x = rmmissing(x);  % remove missing entries
+
+% If you did not convert wavelength to wavenumber, uncomment the following line for the conversion.
+% x = 10^7./x;
 
 
-% y-Achse in Absorption
+% Define variable y_1 as the absorption data
 y_1 = A(:,2);
-y_1 = rmmissing(y_1);
+y_1 = rmmissing(y_1); % remove missing entries
 
 
-%%          ##----- FITFUNKTIONEN -----##
 
-%           ##----- BATHYS -----##
+%%          ##----- FIT FUNCTIONS -----##
+###
+% The following section defines the function handles for the phytochromes. These will be later implemented 
+% as the 'fittype' argument in the lsqcurvefit tool.
+###
+
+%           ##----- BATHY -----##
 
 pabphp_fittype = @(c,x) c(1)*(c(2)*Pfr_PaBphP(x) + (1-c(2))*Pr_PaBphP(x));
 
@@ -35,25 +41,33 @@ rtp2_fittype = @(c,x) c(1)*(c(2)*Pfr_RtP2(x) + (1-c(2))*Pr_RtP2(x));
 
 avp2_wt_fittype = @(c,x) c(1)*(c(2)*Pfr_Avp2(x) + (1-c(2))*Pr_Avp2(x));
 
-%           ## KANONISCH -----##
+%           ##----- CANONICAL -----##
 
 agp1_fittype = @(c,x) c(1)*(c(2)*Pfr_Agp1(x) + (1-c(2))*Pr_Agp1(x));
 
 pstp1_fittype = @(c,x) c(1)*(c(2)*Pfr_PstP1(x) + (1-c(2))*Pr_PstP1(x));
 
-%%          ##----- SKALIERUNGSFAKTOR: Ausgangspunkt für Fitparameter -----##
-% Verhältnis aus:
-% OD der experimentellen Daten bei dem Schnittpunkt der Reinformen und
-% der OD der Reinform-Spektren bei der selben Wellenzahl
+%%          ##----- GLOBAL SCALING FACTOR : Starting parameter -----##
+###
+% The global scaling constant is calculated as the ratio of the 
+% absorbance of the experimental data and the absorbance of the pure form functions
+% at the isosbestic point.
+
+% In each section, the wavelength (and wavenumber) of the phytochromes is given.
+% With the goal of automisation, this section uses the 'find' function of Matlab to determine the 
+% correct absorbance (or y_1) value and dividing it by the value determined from the pure form functions.
+% Keep in mind that - depending on the intervals of your wavelength data - your x-data may look different. 
+% Therefore, you may have to adjust these parameters manually if a conflict arises.
+###
 
 %           ##----- BATHY -----##
-% PaBphP --> lambda = 718 nm bzw.  nu = 13927.5766 cm^-1
-% Agp2 D783N --> lambda = 715.5 nm bzw nu = 13976.2404 cm^-1
-% Agp2 WT --> lambda = 714 nm bzw.    nu = 14005.6022 cm^-1
-% XccBphP WT --> lambda = 704 nm bzw. nu = 14204.5455 cm^-1
-% XccBphP Delta Pas9 --> lambda = 704 nm bzw. nu = 14204.5455 cm^-1
-% RtBphP2 --> lambda = 646 nm bzw nu = 15479.8762 cm^-1 ||| 720 = 13888.8889
-% AvBphP2 WT --> lambda 717.5/717 nm bzw nu = 13947.0014 cm^-1
+% PaBphP --> lambda = 718 nm                 or  nu = 13927.5766 cm^-1
+% Agp2 D783N --> lambda = 715.5 nm           or nu = 13976.2404 cm^-1
+% Agp2 WT --> lambda = 714 nm                or   nu = 14005.6022 cm^-1
+% XccBphP WT --> lambda = 704 nm             or     nu = 14204.5455 cm^-1
+% XccBphP Delta Pas9 --> lambda = 704 nm     or     nu = 14204.5455 cm^-1
+% RtBphP2 --> lambda = 646 nm                or nu = 15479.8762 cm^-1 
+% AvBphP2 WT --> lambda 717.5/717 nm         or nu = 13947.0014 cm^-1
 
 kappa_pabphp = y_1(find(x < 13928 & x>13927))./ 0.553428278;
 kappa_agp2d783n = y_1(find(x < 13980 & x > 13960))./ 0.754301646;
@@ -63,7 +77,7 @@ kappa_xccpas9 = y_1(find( x < 14205 & x > 14204))./ 0.522777198;
 kappa_rtp2 = y_1(find(x < 15480 & x > 15479 ))./ 0.609945657;
 kappa_avp2_wt = y_1(find(x < 13950 & x > 13947 ))./ 0.613858137;
 
-%           ##----- KANONISCH -----##
+%           ##----- CANONICAL -----##
 
 % Agp1 --> lambda = 721.5 nm bzw.  nu = 13860.0139 cm^-1
 %         gerundet: lambda = 722 nm bzw. nu = 13850.4155 cm^-1
