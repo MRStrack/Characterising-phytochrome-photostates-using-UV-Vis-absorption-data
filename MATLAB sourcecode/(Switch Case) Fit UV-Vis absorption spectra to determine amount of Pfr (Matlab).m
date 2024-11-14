@@ -42,8 +42,19 @@ phytochrome = 'xccpas9';
 %________________________________________________________________
 
 %%      ##--- SWITCH CASE FOR PHYTOCHROMES ---##
+% In this section, only add more cases (as in the example). Changes here will have repercussions in the rest of the sourcecode. 
+% To add your own case, you first need to...
+%                                        ...define your functions Pfr_example(x) and Pr_example(x) [done at the very end of the script]
+%                                        ...define the isosbestic point (both the wavenumber "waveno." and the absorbance "ABS" )
 
 switch phytochrome
+
+%    case 'example'
+%        pfr_fit = @(x) Pfr_Example(x); % Redefines the pfr_fit function to be the parent state function of the pfr state
+%        pr_fit = @(x) Pr_Example(x); % Redefines the pr_fit function to be the parent state function of the pr state
+%        % Example --> lambda = ___ nm bzw nu = "waveno." cm^-1  % Place to note down the isosbestic point for reference
+%        const_fit = y_1(find(x < _____ & x > _____))./ "ABS"; % defines starting parameter for the global scaling constant
+    
     %       ##--- BATHY ---##
     case 'agp2d783n'
         pfr_fit = @(x) Pfr_Agp2D783N(x);
@@ -105,6 +116,8 @@ switch phytochrome
         const_fit = y_1(find( x < 13831.5 & x > 13831))./ 0.458932687;
 end    
 
+%________________________________________________________________________
+
 % Fittype is defined using the user input
 %fittype_def = @(c,x) const_fit*(c(1)*pfr_fit(x) + (1-c(1))*pr_fit(x));
 fittype_def = @(c,x) c(1)*(c(2)*pfr_fit(x) + (1-c(2))*pr_fit(x));
@@ -116,7 +129,7 @@ fittype_def = @(c,x) c(1)*(c(2)*pfr_fit(x) + (1-c(2))*pr_fit(x));
 %%      ##---  RESULTS of LSQCURVEFIT  ---##
 
 % The fit calculates the exact values of "alpha" which represents the
-% Pfr content in the sample. "kappa" is the exact value of the scaling
+% Pfr content in the sample. "kappa" is the starting value of the scaling
 % constant. It should exactly equal the value of the "const_fit" variable,
 % i.e. the absorbance of your data at the isosbestic point divided by the
 % absorbance of the pure form functions at the isosbestic point. However,
