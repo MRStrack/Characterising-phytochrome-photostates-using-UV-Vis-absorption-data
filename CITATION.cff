@@ -1,0 +1,20 @@
+cff-version: 1.0.0
+message: "If you use this software, please cite it as below."
+authors:
+- family-names: "Strack"
+  given-names: "Merle R"
+  orcid: "https://orcid.org/0009-0004-6666-4819"
+- family-names: "Huber"
+  given-names: "Christina"
+  orcid: "https://orcid.org/0009-0000-2435-1989"
+- family-names: "Diller"
+  given-names: "Rolf"
+  orcid: "https://orcid.org/0000-0002-3629-8334"
+- family-names: "Frankenberg-Dinkel"
+  given-names: "Nicole"
+  orcid: "https://orcid.org/0000-0002-7757-6839"
+title: "Characterising phytochrome photostates using UV/Vis absorption spectra"
+version: 2.0.4
+doi: 10.1016/j.jbc.2024.107148
+date-released: 2024-03-08
+url: "https://github.com/MRStrack/Characterising-phytochrome-photostates-using-UV-Vis-absorption-data"
