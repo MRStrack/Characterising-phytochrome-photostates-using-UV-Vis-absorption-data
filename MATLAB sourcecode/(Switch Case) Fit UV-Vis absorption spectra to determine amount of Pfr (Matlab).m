@@ -19,8 +19,8 @@ y_1 = rmmissing(y_1);
 %% USER INPUT: Define phytochrome
 
 % !!! Chose the correct handle/name for the phytochrome from the list below
-% and input it into the '_____' space:
-phytochrome = 'xccpas9';
+% and input it into quotations in the '_____' space:
+phytochrome = '_____';
 
 %   ##--- Phytochrome handles ---##
 
@@ -114,20 +114,22 @@ switch phytochrome
         pr_fit = @(x) Pr_PstP1(x);
         % PstBphP1 --> lambda = 723 nm bzw. nu = 13831.2586 cm^-1
         const_fit = y_1(find( x < 13831.5 & x > 13831))./ 0.458932687;
+
+    otherwise
+        disp('Please select a phytochrome from the list!');
 end    
 
 %________________________________________________________________________
 
 % Fittype is defined using the user input
-%fittype_def = @(c,x) const_fit*(c(1)*pfr_fit(x) + (1-c(1))*pr_fit(x));
 fittype_def = @(c,x) c(1)*(c(2)*pfr_fit(x) + (1-c(2))*pr_fit(x));
 
 
 %%      ##--- FIT FUNCTION LSQCURVEFIT  ---###
 [fit_of_data, resnorm,residuals,exitflag,output,lambda,jacobian] = lsqcurvefit(fittype_def,[const_fit,0.5],x,y_1,[0,0],[inf,1]);
 
-%%      ##---  RESULTS of LSQCURVEFIT  ---##
 
+%%      ##---  RESULTS of LSQCURVEFIT  ---##
 % The fit calculates the exact values of "alpha" which represents the
 % Pfr content in the sample. "kappa" is the starting value of the scaling
 % constant. It should exactly equal the value of the "const_fit" variable,
@@ -140,49 +142,44 @@ fittype_def = @(c,x) c(1)*(c(2)*pfr_fit(x) + (1-c(2))*pr_fit(x));
 alpha_value = fit_of_data(2);
 kappa = fit_of_data(1);
 
-if exitflag == 1
-    disp("Funktion konvergiert auf Lösung")
-end
 
-%%                  ### STANDARDABWEICHUNG ###
-%ci = nlparci(beta,r,"Covar",CovB) returns the 95% confidence 
+%%                  ##---  STANDARD DEVIATION  ---##
+% ci = nlparci(beta,r,"Covar",CovB) returns the 95% confidence 
 % intervals ci for the nonlinear least-squares parameter estimates beta. 
 % Documentation: 
 % https://de.mathworks.com/help/optim/ug/nonlinear-curve-fitting-with-lsqcurvefit.html
+
 ci = nlparci(fit_of_data,residuals,'jacobian',jacobian);
 conf_ob = ci(2,2);
 agustd = (ci(2)-alpha_value)/alpha_value *100;
 
-%%                  ### RESIDUUM ###
 
-%plot(x,residuals);
-hold on
-
-%fitdata_y = fittype(fit_der_daten,x);
-
-%%          ##----- PLOTTING -----##
+%%                  ##---  PLOTTING THE FIT  ---##
+% The following section should be adapted by the user for the desired look of your plot.
+% The plot can be used to - at a glance - determine the goodness of fit and if the fit 
+% was successful. 
 
 plot(x,y_1, 'ok', x, fittype_def(fit_of_data,x),'-g');
 
 
 
-% Achsen
+% AXES
 clear title;
 clear xlabel;
 clear ylabel;
 xlabel('\boldmath$\tilde{\nu} / cm^{-1}$','FontSize',22,'Interpreter','latex');
-ylabel('\boldmath$Absorption / OD$','FontSize',22, 'Interpreter','latex'); 
+ylabel('\boldmath$absorbance/ OD$','FontSize',22, 'Interpreter','latex'); 
 ax = gca;
 
-maximum_y = max(y_1) + 0.05*max(y_1);
+maximum_y = max(y_1) + 0.05*max(y_1); % Defines the maximum value of absorbance and determines upper limit of the y-axis of your plot.
 
-set(gca,'XDir','reverse','Xlim',[min(x),max(x)],'Ylim',[-0.005,maximum_y]); %Invertiert die x-Achse, begrenzt x- und y-Achse auf erwünschte Parameter
-ax.FontSize = 30; % Schriftgröße der Achsen
+set(gca,'XDir','reverse','Xlim',[min(x),max(x)],'Ylim',[-0.005,maximum_y]); %Inverts x-axis, limits of the x- and y-axis
+ax.FontSize = 30; % Font size for axis
 
 
-% LEGEND UND TITEL
+% LEGEND and TITLE
 % Titel
-title('$\underline{\bf{Phytochrom{\ } xx:{\ }  {\lambda_{Diode} = xxx{\ }nm, t = xx {\ }min}}}$', 'FontSize',26,'FontWeight','bold','FontName','Verdana', 'Interpreter','latex'); 
+title('$\underline{\bf{phytochrome{\ } xx:{\ }  {\lambda_{diode} = xxx{\ }nm, t = xx {\ }min}}}$', 'FontSize',26,'FontWeight','bold','FontName','Verdana', 'Interpreter','latex'); 
 %'$\underline{\bf{Agp2{\ } D783N:{\ }  {\lambda_{Diode} = 428{\ }nm, t = 20 {\ }min}}}$'
 
 %Ordnet Plots Namen zu (Reihenfolge!) und lokalisiert sie im "Nord-Westen" des Diagramms
