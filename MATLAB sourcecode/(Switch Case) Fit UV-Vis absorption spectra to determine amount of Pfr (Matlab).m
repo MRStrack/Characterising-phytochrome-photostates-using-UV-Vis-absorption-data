@@ -1,7 +1,7 @@
 % Documentation: Nonlinear least-squares solver:
 % https://de.mathworks.com/help/optim/ug/lsqcurvefit.html 
 
-%%          ##----- INPUT DATA -----##
+%%  ## 1 ##     ##--- INPUT DATA ---##
 A = readmatrix('filename.txt');
 
 % Define variable x as wavenumber vector (e.g. 1st column of your matrix)
@@ -15,7 +15,9 @@ x = rmmissing(x);  % remove missing entries
 % Define variable y_1 as the absorption data
 y_1 = A(:,2);
 y_1 = rmmissing(y_1); % remove missing entries
-%% USER INPUT: Define phytochrome
+
+
+%% ## 2 ##         ##--- USER INPUT: Define phytochrome ---##
 
 % !!! Chose the correct handle/name for the phytochrome from the list below
 % and input it into quotations in the '_____' space:
@@ -40,7 +42,7 @@ phytochrome = '_____';
 
 %________________________________________________________________
 
-%%      ##--- SWITCH CASE FOR PHYTOCHROMES ---##
+%% ## 2.5 ##     ##--- SWITCH CASE FOR PHYTOCHROMES ---##
 % In this section, only add more cases (as in the example). Changes here will have repercussions in the rest of the sourcecode. 
 % To add your own case, you first need to...
 %                         ...define your functions Pfr_example(x) and Pr_example(x) [done at the very end of the script]
@@ -56,7 +58,7 @@ switch phytochrome
 %        % Example --> lambda = ___ nm bzw nu = "waveno." cm^-1  % Place to note down the isosbestic point for reference
 %        const_fit = y_1(find(x < _____ & x > _____))./ "ABS"; % defines starting parameter for the global scaling constant
     
-    %       ##--- BATHY ---##
+%           ##--- BATHY ---##
     case 'agp2d783n'
         pfr_fit = @(x) Pfr_Agp2D783N(x);
         pr_fit = @(x) Pr_Agp2D783N(x);
@@ -126,11 +128,11 @@ end
 fittype_def = @(c,x) c(1)*(c(2)*pfr_fit(x) + (1-c(2))*pr_fit(x));
 
 
-%%      ##--- FIT FUNCTION LSQCURVEFIT  ---###
+%% ## 3 ##     ##--- FIT FUNCTION LSQCURVEFIT  ---###
 [fit_of_data, resnorm,residuals,exitflag,output,lambda,jacobian] = lsqcurvefit(fittype_def,[const_fit,0.5],x,y_1,[0,0],[inf,1]);
 
 
-%%      ##---  RESULTS of LSQCURVEFIT  ---##
+%% ## 4 ##     ##---  RESULTS of LSQCURVEFIT  ---##
 % The fit calculates the exact values of "alpha" which represents the
 % Pfr content in the sample. "kappa" is the starting value of the scaling
 % constant. It should exactly equal the value of the "const_fit" variable,
@@ -144,7 +146,7 @@ alpha_value = fit_of_data(2);
 kappa = fit_of_data(1);
 
 
-%%                  ##---  STANDARD DEVIATION  ---##
+%%  ## 4.5 ##                ##---  STANDARD DEVIATION  ---##
 % ci = nlparci(beta,r,"Covar",CovB) returns the 95% confidence 
 % intervals ci for the nonlinear least-squares parameter estimates beta. 
 % Documentation: 
@@ -155,44 +157,43 @@ conf_ob = ci(2,2);
 agustd = (ci(2)-alpha_value)/alpha_value *100;
 
 
-%%                  ##---  PLOTTING THE FIT  ---##
+%%  ## 5 ##                ##---  PLOTTING THE FIT  ---##
 % The following section should be adapted by the user for the desired look of your plot.
 % The plot can be used to - at a glance - determine the goodness of fit and if the fit 
 % was successful. 
 
 plot(x,y_1, 'ok', x, fittype_def(fit_of_data,x),'-g');
 
-
-
-% AXES
+% Modify axes
 clear title;
-clear xlabel;
-clear ylabel;
-xlabel('\boldmath$\tilde{\nu} / cm^{-1}$','FontSize',22,'Interpreter','latex');
-ylabel('\boldmath$absorbance/ OD$','FontSize',22, 'Interpreter','latex'); 
-ax = gca;
+clear xlabel;    % removes any previous labels for x-axis
+clear ylabel;    % removes any previous labels for y-axis
+xlabel('\boldmath$\tilde{\nu} / cm^{-1}$','FontSize',22,'Interpreter','latex');    % redefines label of x-axis
+ylabel('\boldmath$absorbance/ OD$','FontSize',22, 'Interpreter','latex');          % redefines label of y-axis
+ax = gca;    % returns the current axes (or standalone visualization) in the current figure
 
-maximum_y = max(y_1) + 0.05*max(y_1); % Defines the maximum value of absorbance and determines upper limit of the y-axis of your plot.
+maximum_y = max(y_1) + 0.05*max(y_1);    % Defines the maximum value of absorbance and determines upper limit of the y-axis of your plot.
 
-set(gca,'XDir','reverse','Xlim',[min(x),max(x)],'Ylim',[-0.005,maximum_y]); %Inverts x-axis, limits of the x- and y-axis
-ax.FontSize = 30; % Font size for axis
+set(gca,'XDir','reverse','Xlim',[min(x),max(x)],'Ylim',[-0.005,maximum_y]);    % Inverts x-axis, limits of the x- and y-axis
+ax.FontSize = 30; %    Font size for axis
 
+pbaspect([1.2 1 1]);    % plot box aspect ratio for the current axes.
 
-% LEGEND and TITLE
-% Titel
+% Modify legend and title
+% Title
 title('$\underline{\bf{phytochrome{\ } xx:{\ }  {\lambda_{diode} = xxx{\ }nm, t = xx {\ }min}}}$', 'FontSize',26,'FontWeight','bold','FontName','Verdana', 'Interpreter','latex'); 
-%'$\underline{\bf{Agp2{\ } D783N:{\ }  {\lambda_{Diode} = 428{\ }nm, t = 20 {\ }min}}}$'
 
-%Ordnet Plots Namen zu (Reihenfolge!) und lokalisiert sie im "Nord-Westen" des Diagramms
+
+% Legend: Allocates the plots their correct names. Localises the legend in the "north-west" of the plot
 legend({'{$\,$}{$\,$}Rohdaten','{$\,$}{$\,$}Fitfunktion'}...
     ,'Location','northwest','FontSize',28,'interpreter','latex'); 
-% Fügt Anteil Pfr aus Fit dem Plot hinzu
+    
+% Adds the value of alpha (Pfr content) to the plot
 str = {'{\textbf{\underline{Anteil Pfr:}}}', '{$\alpha$} =' num2str(alpha_value)}; 
-text(min(x)+1500, max(y_1) - 0.1*max(y_1), str, 'FontSize',18, 'interpreter','latex'); % x- und y-Koordinate von Text 1
-pbaspect([1.2 1 1])
+text(min(x)+1500, max(y_1) - 0.1*max(y_1), str, 'FontSize',18, 'interpreter','latex');    % coordinates of the text box
 
 
-%%               ##----- FUNCTIONS -----##
+%% ## 6 ##              ##----- FUNCTIONS -----##
 
 
 % HERE BE DRAGONS - DO NOT MODIFY !!!
@@ -658,15 +659,4 @@ function pr_form_pstp1 = Pr_PstP1(x)
         + A_2* 1/(w_2*sqrt(pi/2)) *exp(-2*((x-xc_2).^2/w_2^2))...
         + A_3* 1/(w_3*sqrt(pi/2)) *exp(-2*((x-xc_3).^2/w_3^2))...
         + A_4* 1/(w_4*sqrt(pi/2)) *exp(-2*((x-xc_4).^2/w_4^2));
-end
-
-%%               ##----- ERROR PROPAGATION (1: LINEAR) -----##
-function alpha_partial_pfr = Dalpha_DPfr(x)
-
-%alpha_partial_pfr = abs((1./((Pfr_PaBphP(x) -Pr_PaBphP(x)).^2)).* (y./j - Pr_PaBphP(x))).* 0.08;
-alpha_partial_pfr = (Pr_PaBphP(x)./(Pfr_PaBphP(x) + Pr_PaBphP(x)).^2) *0.08 ;
-end
-
-function alpha_partial_pr = Dalpha_DPr(x)
-alpha_partial_pr = (-Pfr_PaBphP(x)./(Pfr_PaBphP(x) + Pr_PaBphP(x)).^2) *0.08;
 end
