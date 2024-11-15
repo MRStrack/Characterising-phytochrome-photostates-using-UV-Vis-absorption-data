@@ -1,28 +1,27 @@
-clear all
-
 % Documentation: Nonlinear least-squares solver:
 % https://de.mathworks.com/help/optim/ug/lsqcurvefit.html 
-% Kappa als Fitparameter - nicht mehr über isosbestischen Punkt !!
-%%          ##----- DATEN EINLESEN -----##
-A = readmatrix('FL_Pr_Ohne_UG.txt');
 
-% x-Achse in Wellenzahlen, entnommen der ersten Spalte der txt-Datei
+%%          ##----- INPUT DATA -----##
+A = readmatrix('filename.txt');
+
+% Define variable x as wavenumber vector (e.g. 1st column of your matrix)
 x = A(:,1);
-x = rmmissing(x);
-x = 10^7./x; % Das hier verwenden, falls in Wellenlänge
+x = rmmissing(x);  % remove missing entries
+
+% If you did not convert wavelength to wavenumber, uncomment the following line for the conversion.
+% x = 10^7./x;
 
 
-% y-Achse in Absorption
+% Define variable y_1 as the absorption data
 y_1 = A(:,2);
-y_1 = rmmissing(y_1);
-
+y_1 = rmmissing(y_1); % remove missing entries
 %% USER INPUT: Define phytochrome
 
 % !!! Chose the correct handle/name for the phytochrome from the list below
 % and input it into quotations in the '_____' space:
 phytochrome = '_____';
 
-%   ##--- Phytochrome handles ---##
+%       ##--- Phytochrome handles ---##
 
 %______________phytochrome______________|________handle__________
 
@@ -44,8 +43,10 @@ phytochrome = '_____';
 %%      ##--- SWITCH CASE FOR PHYTOCHROMES ---##
 % In this section, only add more cases (as in the example). Changes here will have repercussions in the rest of the sourcecode. 
 % To add your own case, you first need to...
-%                                        ...define your functions Pfr_example(x) and Pr_example(x) [done at the very end of the script]
-%                                        ...define the isosbestic point (both the wavenumber "waveno." and the absorbance "ABS" )
+%                         ...define your functions Pfr_example(x) and Pr_example(x) [done at the very end of the script]
+%                         ...define the isosbestic point (both the wavenumber "waveno." and the absorbance "ABS" )
+
+
 
 switch phytochrome
 
