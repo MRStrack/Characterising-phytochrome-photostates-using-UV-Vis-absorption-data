@@ -18,9 +18,10 @@ x = rmmissing(x);  % remove missing entries
 y_1 = A(:,2);
 y_1 = rmmissing(y_1); % remove missing entries
 
+%_____________________________________________________________________________________
+%‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾
 
-
-%%          ##----- FIT FUNCTIONS -----##
+%%  ## 2 ##          ##----- FIT FUNCTIONS -----##
 %###
 % The following section defines the function handles for the phytochromes. These will be later implemented 
 % as the 'fittype' argument in the lsqcurvefit tool.
@@ -28,19 +29,20 @@ y_1 = rmmissing(y_1); % remove missing entries
 
 %           ##----- BATHY -----##
 
-pabphp_fittype = @(c,x) c(1)*(c(2)*Pfr_PaBphP(x) + (1-c(2))*Pr_PaBphP(x));
-
 agp2d783n_fittype = @(c,x) c(1)*(c(2)*Pfr_Agp2D783N(x) + (1-c(2))*Pr_Agp2D783N(x));
 
 agp2wt_fittype = @(c,x) c(1)*(c(2)*Pfr_Agp2WT(x) + (1-c(2))*Pr_Agp2WT(x));
 
-xccwt_fittype = @(c,x) c(1)*(c(2)*Pfr_XccWT(x) + (1-c(2))*Pr_XccWT(x));
+avp2_wt_fittype = @(c,x) c(1)*(c(2)*Pfr_Avp2(x) + (1-c(2))*Pr_Avp2(x));
 
-xccpas9_fittype = @(c,x) c(1)*(c(2)*Pfr_XccPAS9(x) + (1-c(2))*Pr_XccPAS9(x));
+pabphp_fittype = @(c,x) c(1)*(c(2)*Pfr_PaBphP(x) + (1-c(2))*Pr_PaBphP(x));
 
 rtp2_fittype = @(c,x) c(1)*(c(2)*Pfr_RtP2(x) + (1-c(2))*Pr_RtP2(x));
 
-avp2_wt_fittype = @(c,x) c(1)*(c(2)*Pfr_Avp2(x) + (1-c(2))*Pr_Avp2(x));
+xccpas9_fittype = @(c,x) c(1)*(c(2)*Pfr_XccPAS9(x) + (1-c(2))*Pr_XccPAS9(x));
+
+xccwt_fittype = @(c,x) c(1)*(c(2)*Pfr_XccWT(x) + (1-c(2))*Pr_XccWT(x));
+
 
 %           ##----- CANONICAL -----##
 
@@ -49,7 +51,7 @@ agp1_fittype = @(c,x) c(1)*(c(2)*Pfr_Agp1(x) + (1-c(2))*Pr_Agp1(x));
 pstp1_fittype = @(c,x) c(1)*(c(2)*Pfr_PstP1(x) + (1-c(2))*Pr_PstP1(x));
 
 
-%%          ##----- GLOBAL SCALING FACTOR : Starting parameter -----##
+%%  ## 2.5 ##          ##----- GLOBAL SCALING FACTOR : Starting parameter -----##
 %###
 % The global scaling constant is calculated as the ratio of the 
 % absorbance of the experimental data and the absorbance of the pure form functions
@@ -65,7 +67,9 @@ pstp1_fittype = @(c,x) c(1)*(c(2)*Pfr_PstP1(x) + (1-c(2))*Pr_PstP1(x));
 
 %    Table of phytochromes and the wavenumber of their isosbestic points           
 
-%______________phytochrome______________|________wavenumber_________|____wavelength___
+%_____________phytochrome_______________|________wavenumber_________|____wavelength___
+
+%============bathy=====================================================================
 
 % Agrobacterium tumefaciens P2 D783N    |       13976.2404 cm^-1    |    715.5 nm  
 % Agrobacterium tumefaciens P2          |       14005.6022 cm^-1    |    714 nm 
@@ -75,28 +79,41 @@ pstp1_fittype = @(c,x) c(1)*(c(2)*Pfr_PstP1(x) + (1-c(2))*Pr_PstP1(x));
 % Xanthomonas c. pv. c. DeltaPAS9       |       14204.5455 cm^-1    |    704 nm
 % Xanthomonas c. pv. c. WT              |       14204.5455 cm^-1    |    704 nm
 
-%_____________________________________________________________________________________
+%===========canonical=================================================================
 
 % Agrobacterium tumefaciens P1          |       13860.0139 cm^-1    |    721.5 nm
 % Pseudomonas syringae P1               |       13831.2586 cm^-1    |    723 nm
 
-%________________________________________________________________
+%_____________________________________________________________________________________
+%‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾
 
-kappa_pabphp = y_1(find(x < 13928 & x>13927))./ 0.553428278;
-kappa_agp2d783n = y_1(find(x < 13980 & x > 13960))./ 0.754301646;
-kappa_agp2wt = y_1(find( x < 14006 & x > 14005))./ 0.84747794;
-kappa_xccwt = y_1(find( x < 14205 & x > 14204))./ 0.52763496;
-kappa_xccpas9 = y_1(find( x < 14205 & x > 14204))./ 0.522777198;
-kappa_rtp2 = y_1(find(x < 15480 & x > 15479 ))./ 0.609945657;
-kappa_avp2_wt = y_1(find(x < 13950 & x > 13947 ))./ 0.613858137;
+con_agp2d783n = y_1(find(x < 13980 & x > 13960))./ 0.754301646;
+con_agp2wt = y_1(find( x < 14006 & x > 14005))./ 0.84747794;
+con_avp2_wt = y_1(find(x < 13950 & x > 13947 ))./ 0.613858137;
+con_pabphp = y_1(find(x < 13928 & x>13927))./ 0.553428278;
+con_rtp2 = y_1(find(x < 15480 & x > 15479 ))./ 0.609945657;
+con_xccpas9 = y_1(find( x < 14205 & x > 14204))./ 0.522777198;
+con_xccwt = y_1(find( x < 14205 & x > 14204))./ 0.52763496;
 
-%           ##----- CANONICAL -----##
+%===========canonical=================================================================
 
+con_agp1 = y_1(find( x < 13860.5 & x > 13850))./ 0.467174941;
+con_pstp1 = y_1(find( x < 13831.5 & x > 13831))./ 0.458932687;
 
-kappa_agp1 = y_1(find( x < 13860.5 & x > 13850))./ 0.467174941;
-kappa_pstp1 = y_1(find( x < 13831.5 & x > 13831))./ 0.458932687;
+%% ## !!! ## Define phytochrome: which "con" and which fit function
+%-------------|_phy_|----#
+const = con_xccpas9;
+%---------|_phy_|-------#
+fittype = xccpas9_fittype;
 
+%_____________________________________________________________________________________
+%‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾
 
+%% ## 3 ##     ##--- FIT FUNCTION LSQCURVEFIT  ---###
+[fit_of_data, resnorm,residuals,exitflag,output,lambda,jacobian] = lsqcurvefit(fittype_def,[const_fit,0.5],x,y_1,[0,0],[inf,1]);
+
+%_____________________________________________________________________________________
+%‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾
 
 %% ## 4 ##     ##---  RESULTS of LSQCURVEFIT  ---##
 % The fit calculates the exact values of "alpha" which represents the
@@ -111,7 +128,8 @@ kappa_pstp1 = y_1(find( x < 13831.5 & x > 13831))./ 0.458932687;
 alpha_value = fit_of_data(2);
 kappa = fit_of_data(1);
 
-
+%_____________________________________________________________________________________
+%‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾
 
 %%  ## 4.5 ##                ##---  STANDARD DEVIATION  ---##
 
@@ -123,7 +141,8 @@ ci = nlparci(fit_der_daten,residuals,'jacobian',jacobian);
 conf_ob = ci(2,2);
 agustd = (ci(2)-alpha_wert)/alpha_wert *100;
 
-
+%_____________________________________________________________________________________
+%‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾
 
 %%  ## 5 ##                ##---  PLOTTING THE FIT  ---##
 % The following section should be adapted by the user for the desired look of your plot.
@@ -160,6 +179,8 @@ legend({'{$\,$}{$\,$}Rohdaten','{$\,$}{$\,$}Fitfunktion'}...
 str = {'{\textbf{\underline{Anteil Pfr:}}}', '{$\alpha$} =' num2str(alpha_value)}; 
 text(min(x)+1500, max(y_1) - 0.1*max(y_1), str, 'FontSize',18, 'interpreter','latex');    % coordinates of the text box
 
+%_____________________________________________________________________________________
+%‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾
 
 %% ## 6 ##              ##----- FUNCTIONS -----##
 
