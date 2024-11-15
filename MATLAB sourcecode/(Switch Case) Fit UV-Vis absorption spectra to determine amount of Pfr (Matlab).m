@@ -16,6 +16,8 @@ x = rmmissing(x);  % remove missing entries
 y_1 = A(:,2);
 y_1 = rmmissing(y_1); % remove missing entries
 
+%_____________________________________________________________________________________
+%‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾
 
 %% ## 2 ##         ##--- USER INPUT: Define phytochrome ---##
 
@@ -26,7 +28,7 @@ phytochrome = '_____';
 %       ##--- Phytochrome handles ---##
 
 %______________phytochrome______________|________handle__________
-
+%============bathy===============================================
 % Agrobacterium tumefaciens P2 D783N    |       'agp2d783n' 
 % Agrobacterium tumefaciens P2          |       'ag2wt'
 % Agrobacterium vitis P2                |       'avp2'
@@ -35,71 +37,62 @@ phytochrome = '_____';
 % Xanthomonas c. pv. c. DeltaPAS9       |       'xccpas9'
 % Xanthomonas c. pv. c. WT              |       'xccwt'
 
-%_________________________________________________________________
+%===========canonical=============================================
 
 % Agrobacterium tumefaciens P1          |       'agp1'
 % Pseudomonas syringae P1               |       'pstp1'
-
-%________________________________________________________________
+%_________________________________________________________________
+%‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾
 
 %% ## 2.5 ##     ##--- SWITCH CASE FOR PHYTOCHROMES ---##
 % In this section, only add more cases (as in the example). Changes here will have repercussions in the rest of the sourcecode. 
 % To add your own case, you first need to...
-%                         ...define your functions Pfr_example(x) and Pr_example(x) [done at the very end of the script]
 %                         ...define the isosbestic point (both the wavenumber "waveno." and the absorbance "ABS" )
-
+%                         ...define the fittype using the parent state functions defined at the very end of the script
 
 
 switch phytochrome
 
 %    case 'example'
-%        pfr_fit = @(x) Pfr_Example(x); % Redefines the pfr_fit function to be the parent state function of the pfr state
-%        pr_fit = @(x) Pr_Example(x); % Redefines the pr_fit function to be the parent state function of the pr state
 %        % Example --> lambda = ___ nm bzw nu = "waveno." cm^-1  % Place to note down the isosbestic point for reference
 %        const_fit = y_1(find(x < _____ & x > _____))./ "ABS"; % defines starting parameter for the global scaling constant
+%        fittype_example = @(c,x) c(1)*(c(2)*Pfr_example(x) + (1-c(2))*Pr_example(x));
     
 %           ##--- BATHY ---##
     case 'agp2d783n'
-        pfr_fit = @(x) Pfr_Agp2D783N(x);
-        pr_fit = @(x) Pr_Agp2D783N(x);
         % Agp2 D783N --> lambda = 715.5 nm bzw nu = 13976.2404 cm^-1
         const_fit = y_1(find(x < 13980 & x > 13960))./ 0.754301646;
+        fittype_def = @(c,x) c(1)*(c(2)*Pfr_Agp2D783N(x) + (1-c(2))*Pr_Agp2D783N(x));
     
     case 'ag2wt'
-        pfr_fit = @(x) Pfr_Agp2WT(x);
-        pr_fit = @(x) Pr_Agp2WT(x);
         % Agp2 WT --> lambda = 714 nm bzw.    nu = 14005.6022 cm^-1
         const_fit = y_1(find( x < 14006 & x > 14005))./ 0.84747794;
+        fittype_def = @(c,x) c(1)*(c(2)*Pfr_Agp2WT(x) + (1-c(2))*Pr_Agp2WT(x));
 
     case 'avp2'
-        pfr_fit = @(x) Pfr_Avp2(x);
-        pr_fit = @(x) Pr_Avp2(x);
         % AvBphP2 WT --> lambda 717.5/717 nm bzw nu = 13947.0014 cm^-1
         const_fit = y_1(find(x < 13950 & x > 13947 ))./ 0.613858137;
+        fittype_def = @(c,x) c(1)*(c(2)*Pfr_Avp2(x) + (1-c(2))*Pr_Avp2(x));
 
     case 'pabphp'
-        pfr_fit = @(x) Pfr_PaBphP(x);
-        pr_fit = @(x) Pr_PaBphP(x);
         % PaBphP --> lambda = 718 nm bzw.  nu = 13927.5766 cm^-1
         const_fit = y_1(find(x < 13928 & x>13927))./ 0.553428278;
+        fittype_def = @(c,x) c(1)*(c(2)*Pfr_PaBphP(x) + (1-c(2))*Pr_PaBphP(x));
     
     case 'rtp2'
-        pfr_fit = @(x) Pfr_RtP2(x);
-        pr_fit = @(x) Pr_RtP2(x);
         % RtBphP2 --> lambda = 646 nm bzw nu = 15479.8762 cm^-1 
         const_fit = y_1(find(x < 15480 & x > 15479 ))./ 0.609945657;
+        fittype_def = @(c,x) c(1)*(c(2)*Pfr_RtP2(x) + (1-c(2))*Pr_RtP2(x));
 
     case 'xccpas9'
-        pfr_fit = @(x) Pfr_XccPAS9(x);
-        pr_fit = @(x) Pr_XccPAS9(x);
         % XccBphP Delta Pas9 --> lambda = 704 nm bzw. nu = 14204.5455 cm^-1
         const_fit = y_1(find( x < 14205 & x > 14204))./ 0.522777198;
+        fittype_def = @(c,x) c(1)*(c(2)*Pfr_XccPAS9(x) + (1-c(2))*Pr_XccPAS9(x));
     
     case 'xccwt'
-        pfr_fit = @(x) Pfr_XccWT(x);
-        pr_fit = @(x) Pr_XccWT(x);
         % XccBphP WT --> lambda = 704 nm bzw. nu = 14204.5455 cm^-1
         const_fit = y_1(find( x < 14205 & x > 14204))./ 0.52763496;
+        fittype_def = @(c,x) c(1)*(c(2)*Pfr_XccWT(x) + (1-c(2))*Pr_XccWT(x));
     
         %   ##------##
         %   ##------##
@@ -107,17 +100,16 @@ switch phytochrome
     %       ##--- CANONICAL ---##
 
     case 'agp1'
-        pfr_fit = @(x) Pfr_Agp1(x);
-        pr_fit = @(x) Pr_Agp1(x);
         % Agp1 --> lambda = 721.5 nm bzw.  nu = 13860.0139 cm^-1
         const_fit = y_1(find( x < 13860.5 & x > 13850))./ 0.467174941;
+        fittype_def = @(c,x) c(1)*(c(2)*Pfr_Agp1(x) + (1-c(2))*Pr_Agp1(x));
     
     case 'pstp1'
-        pfr_fit = @(x) Pfr_PstP1(x);
-        pr_fit = @(x) Pr_PstP1(x);
         % PstBphP1 --> lambda = 723 nm bzw. nu = 13831.2586 cm^-1
         const_fit = y_1(find( x < 13831.5 & x > 13831))./ 0.458932687;
+        fittype_def = @(c,x) c(1)*(c(2)*Pfr_PstP1(x) + (1-c(2))*Pr_PstP1(x));
 
+% The "otherwise" condition informs the user 
     otherwise
         disp('Please select a phytochrome from the list!');
 end    
@@ -127,10 +119,14 @@ end
 % Fittype is defined using the user input
 fittype_def = @(c,x) c(1)*(c(2)*pfr_fit(x) + (1-c(2))*pr_fit(x));
 
+%_____________________________________________________________________________________
+%‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾
 
 %% ## 3 ##     ##--- FIT FUNCTION LSQCURVEFIT  ---###
 [fit_of_data, resnorm,residuals,exitflag,output,lambda,jacobian] = lsqcurvefit(fittype_def,[const_fit,0.5],x,y_1,[0,0],[inf,1]);
 
+%_____________________________________________________________________________________
+%‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾
 
 %% ## 4 ##     ##---  RESULTS of LSQCURVEFIT  ---##
 % The fit calculates the exact values of "alpha" which represents the
@@ -156,6 +152,8 @@ ci = nlparci(fit_of_data,residuals,'jacobian',jacobian);
 conf_ob = ci(2,2);
 agustd = (ci(2)-alpha_value)/alpha_value *100;
 
+%_____________________________________________________________________________________
+%‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾
 
 %%  ## 5 ##                ##---  PLOTTING THE FIT  ---##
 % The following section should be adapted by the user for the desired look of your plot.
@@ -192,6 +190,8 @@ legend({'{$\,$}{$\,$}Rohdaten','{$\,$}{$\,$}Fitfunktion'}...
 str = {'{\textbf{\underline{Anteil Pfr:}}}', '{$\alpha$} =' num2str(alpha_value)}; 
 text(min(x)+1500, max(y_1) - 0.1*max(y_1), str, 'FontSize',18, 'interpreter','latex');    % coordinates of the text box
 
+%_____________________________________________________________________________________
+%‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾
 
 %% ## 6 ##              ##----- FUNCTIONS -----##
 
