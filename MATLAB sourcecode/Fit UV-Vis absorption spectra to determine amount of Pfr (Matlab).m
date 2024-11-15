@@ -2,7 +2,8 @@
 % https://de.mathworks.com/help/optim/ug/lsqcurvefit.html 
 % Kappa als Fitparameter - nicht mehr über isosbestischen Punkt !!
 
-%%          ##----- INPUT DATA -----##
+
+%%  ## 1 ##     ##--- INPUT DATA ---##
 A = readmatrix('filename.txt');
 
 % Define variable x as wavenumber vector (e.g. 1st column of your matrix)
@@ -20,10 +21,10 @@ y_1 = rmmissing(y_1); % remove missing entries
 
 
 %%          ##----- FIT FUNCTIONS -----##
-###
+%###
 % The following section defines the function handles for the phytochromes. These will be later implemented 
 % as the 'fittype' argument in the lsqcurvefit tool.
-###
+%###
 
 %           ##----- BATHY -----##
 
@@ -47,8 +48,9 @@ agp1_fittype = @(c,x) c(1)*(c(2)*Pfr_Agp1(x) + (1-c(2))*Pr_Agp1(x));
 
 pstp1_fittype = @(c,x) c(1)*(c(2)*Pfr_PstP1(x) + (1-c(2))*Pr_PstP1(x));
 
+
 %%          ##----- GLOBAL SCALING FACTOR : Starting parameter -----##
-###
+%###
 % The global scaling constant is calculated as the ratio of the 
 % absorbance of the experimental data and the absorbance of the pure form functions
 % at the isosbestic point.
@@ -58,16 +60,27 @@ pstp1_fittype = @(c,x) c(1)*(c(2)*Pfr_PstP1(x) + (1-c(2))*Pr_PstP1(x));
 % correct absorbance (or y_1) value and dividing it by the value determined from the pure form functions.
 % Keep in mind that - depending on the intervals of your wavelength data - your x-data may look different. 
 % Therefore, you may have to adjust these parameters manually if a conflict arises.
-###
+%###
 
-%           ##----- BATHY -----##
-% PaBphP --> lambda = 718 nm                 or  nu = 13927.5766 cm^-1
-% Agp2 D783N --> lambda = 715.5 nm           or nu = 13976.2404 cm^-1
-% Agp2 WT --> lambda = 714 nm                or   nu = 14005.6022 cm^-1
-% XccBphP WT --> lambda = 704 nm             or     nu = 14204.5455 cm^-1
-% XccBphP Delta Pas9 --> lambda = 704 nm     or     nu = 14204.5455 cm^-1
-% RtBphP2 --> lambda = 646 nm                or nu = 15479.8762 cm^-1 
-% AvBphP2 WT --> lambda 717.5/717 nm         or nu = 13947.0014 cm^-1
+
+%    Table of phytochromes and the wavenumber of their isosbestic points           
+
+%______________phytochrome______________|________wavenumber_________|____wavelength___
+
+% Agrobacterium tumefaciens P2 D783N    |       13976.2404 cm^-1    |    715.5 nm  
+% Agrobacterium tumefaciens P2          |       14005.6022 cm^-1    |    714 nm 
+% Agrobacterium vitis P2                |       13947.0014 cm^-1    |    717 nm
+% Pseudomonas aeruginosa                |       13927.5766 cm^-1    |    718 nm
+% Ramlibacter tataouinensis P2          |       15479.8762 cm^-1    |    646 nm 
+% Xanthomonas c. pv. c. DeltaPAS9       |       14204.5455 cm^-1    |    704 nm
+% Xanthomonas c. pv. c. WT              |       14204.5455 cm^-1    |    704 nm
+
+%_____________________________________________________________________________________
+
+% Agrobacterium tumefaciens P1          |       13860.0139 cm^-1    |    721.5 nm
+% Pseudomonas syringae P1               |       13831.2586 cm^-1    |    723 nm
+
+%________________________________________________________________
 
 kappa_pabphp = y_1(find(x < 13928 & x>13927))./ 0.553428278;
 kappa_agp2d783n = y_1(find(x < 13980 & x > 13960))./ 0.754301646;
@@ -79,32 +92,29 @@ kappa_avp2_wt = y_1(find(x < 13950 & x > 13947 ))./ 0.613858137;
 
 %           ##----- CANONICAL -----##
 
-% Agp1 --> lambda = 721.5 nm bzw.  nu = 13860.0139 cm^-1
-%         gerundet: lambda = 722 nm bzw. nu = 13850.4155 cm^-1
-%           ^-- nur für ganze Wellenlängen Unterschiede
-% PstBphP1 --> lambda = 723 nm bzw. nu = 13831.2586 cm^-1
 
 kappa_agp1 = y_1(find( x < 13860.5 & x > 13850))./ 0.467174941;
 kappa_pstp1 = y_1(find( x < 13831.5 & x > 13831))./ 0.458932687;
 
 
 
-%% --> FOLGEND ÄNDERUNGEN <-- ###--!!! FITTYPE UND KAPPA !!!--##
-%-------------|_phy_|----#
-const = kappa_xccpas9;
-%---------|_phy_|-------#
-fittype = xccpas9_fittype;
+%% ## 4 ##     ##---  RESULTS of LSQCURVEFIT  ---##
+% The fit calculates the exact values of "alpha" which represents the
+% Pfr content in the sample. "kappa" is the starting value of the scaling
+% constant. It should exactly equal the value of the "const_fit" variable,
+% i.e. the absorbance of your data at the isosbestic point divided by the
+% absorbance of the pure form functions at the isosbestic point. However,
+% to improve goodness of fit and account for discrepancies due to, f.e.,
+% different intervals, the scaling constant is incorporated as a fit
+% parameter.
 
-[fit_der_daten, resnorm,residuals,exitflag,output,lambda,jacobian] = lsqcurvefit(fittype,[const,0.5],x,y_1,[0,0],[inf,1]);
+alpha_value = fit_of_data(2);
+kappa = fit_of_data(1);
 
-alpha_wert = fit_der_daten(2);
-kappa = fit_der_daten(1);
 
-if exitflag == 1
-    disp("Funktion konvergiert auf Lösung")
-end
 
-%%                  ### STANDARDABWEICHUNG ###
+%%  ## 4.5 ##                ##---  STANDARD DEVIATION  ---##
+
 %ci = nlparci(beta,r,"Covar",CovB) returns the 95% confidence 
 % intervals ci for the nonlinear least-squares parameter estimates beta. 
 % Documentation: 
@@ -113,49 +123,45 @@ ci = nlparci(fit_der_daten,residuals,'jacobian',jacobian);
 conf_ob = ci(2,2);
 agustd = (ci(2)-alpha_wert)/alpha_wert *100;
 
-%%                  ### RESIDUUM ###
-
-%plot(x,residuals);
-hold on
-
-%fitdata_y = fittype(fit_der_daten,x);
-
-%%          ##----- PLOTTING -----##
-
-plot(x,y_1, 'ok', x, fittype(fit_der_daten,x),'-g');
 
 
+%%  ## 5 ##                ##---  PLOTTING THE FIT  ---##
+% The following section should be adapted by the user for the desired look of your plot.
+% The plot can be used to - at a glance - determine the goodness of fit and if the fit 
+% was successful. 
 
-% Achsen
+plot(x,y_1, 'ok', x, fittype_def(fit_of_data,x),'-g');
+
+% Modify axes
 clear title;
-clear xlabel;
-clear ylabel;
-xlabel('\boldmath$\tilde{\nu} / cm^{-1}$','FontSize',22,'Interpreter','latex');
-ylabel('\boldmath$Absorption / OD$','FontSize',22, 'Interpreter','latex'); 
-ax = gca;
+clear xlabel;    % removes any previous labels for x-axis
+clear ylabel;    % removes any previous labels for y-axis
+xlabel('\boldmath$\tilde{\nu} / cm^{-1}$','FontSize',22,'Interpreter','latex');    % redefines label of x-axis
+ylabel('\boldmath$absorbance/ OD$','FontSize',22, 'Interpreter','latex');          % redefines label of y-axis
+ax = gca;    % returns the current axes (or standalone visualization) in the current figure
 
-maximum_y = max(y_1) + 0.05*max(y_1);
+maximum_y = max(y_1) + 0.05*max(y_1);    % Defines the maximum value of absorbance and determines upper limit of the y-axis of your plot.
 
-set(gca,'XDir','reverse','Xlim',[min(x),max(x)],'Ylim',[-0.005,maximum_y]); %Invertiert die x-Achse, begrenzt x- und y-Achse auf erwünschte Parameter
-ax.FontSize = 30; % Schriftgröße der Achsen
+set(gca,'XDir','reverse','Xlim',[min(x),max(x)],'Ylim',[-0.005,maximum_y]);    % Inverts x-axis, limits of the x- and y-axis
+ax.FontSize = 30; %    Font size for axis
+
+pbaspect([1.2 1 1]);    % plot box aspect ratio for the current axes.
+
+% Modify legend and title
+% Title
+title('$\underline{\bf{phytochrome{\ } xx:{\ }  {\lambda_{diode} = xxx{\ }nm, t = xx {\ }min}}}$', 'FontSize',26,'FontWeight','bold','FontName','Verdana', 'Interpreter','latex'); 
 
 
-% LEGEND UND TITEL
-% Titel
-title('$\underline{\bf{Phytochrom{\ } xx:{\ }  {\lambda_{Diode} = xxx{\ }nm, t = xx {\ }min}}}$', 'FontSize',26,'FontWeight','bold','FontName','Verdana', 'Interpreter','latex'); 
-%'$\underline{\bf{Agp2{\ } D783N:{\ }  {\lambda_{Diode} = 428{\ }nm, t = 20 {\ }min}}}$'
-
-%Ordnet Plots Namen zu (Reihenfolge!) und lokalisiert sie im "Nord-Westen" des Diagramms
+% Legend: Allocates the plots their correct names. Localises the legend in the "north-west" of the plot
 legend({'{$\,$}{$\,$}Rohdaten','{$\,$}{$\,$}Fitfunktion'}...
     ,'Location','northwest','FontSize',28,'interpreter','latex'); 
-% Fügt Anteil Pfr aus Fit dem Plot hinzu
-str = {'{\textbf{\underline{Anteil Pfr:}}}', '{$\alpha$} =' num2str(alpha_wert)}; 
-text(min(x)+1500, max(y_1) - 0.1*max(y_1), str, 'FontSize',18, 'interpreter','latex'); % x- und y-Koordinate von Text 1
-pbaspect([1.2 1 1])
+    
+% Adds the value of alpha (Pfr content) to the plot
+str = {'{\textbf{\underline{Anteil Pfr:}}}', '{$\alpha$} =' num2str(alpha_value)}; 
+text(min(x)+1500, max(y_1) - 0.1*max(y_1), str, 'FontSize',18, 'interpreter','latex');    % coordinates of the text box
 
 
-%%               ##----- FUNCTIONS -----##
-
+%% ## 6 ##              ##----- FUNCTIONS -----##
 
 % HERE BE DRAGONS - DO NOT MODIFY !!!
 %% ##----- PaBphP WT -----##
@@ -622,13 +628,3 @@ function pr_form_pstp1 = Pr_PstP1(x)
         + A_4* 1/(w_4*sqrt(pi/2)) *exp(-2*((x-xc_4).^2/w_4^2));
 end
 
-%%               ##----- ERROR PROPAGATION (1: LINEAR) -----##
-function alpha_partial_pfr = Dalpha_DPfr(x)
-
-%alpha_partial_pfr = abs((1./((Pfr_PaBphP(x) -Pr_PaBphP(x)).^2)).* (y./j - Pr_PaBphP(x))).* 0.08;
-alpha_partial_pfr = (Pr_PaBphP(x)./(Pfr_PaBphP(x) + Pr_PaBphP(x)).^2) *0.08 ;
-end
-
-function alpha_partial_pr = Dalpha_DPr(x)
-alpha_partial_pr = (-Pfr_PaBphP(x)./(Pfr_PaBphP(x) + Pr_PaBphP(x)).^2) *0.08;
-end
