@@ -1,6 +1,24 @@
-% Documentation: Nonlinear least-squares solver:
-% https://de.mathworks.com/help/optim/ug/lsqcurvefit.html 
-% Kappa als Fitparameter - nicht mehr über isosbestischen Punkt !!
+% (Switch Case) Fit UV-Vis absorption spectra to determine amount of Pfr (Matlab).m
+%
+%    The source code aims to calculate the Pfr content of a phytochrome from a UV/Vis absorption spectrum. 
+% It is written to explicitly do so for a number of bacterial phytochromes (both bathy and canonical), using
+% Gaussian functions to describe their parent states. 
+% In order for it to function as intended for one of the phytochromes included, you need to subtract a linear background
+% scattering from the Q-band region of the phytochrome. This can then be fitted.
+
+% This code is organised into 6 sections. The "Switch Case" version aims to reduce the amount of changes a user 
+% needs to make, whereas the "Individual" version is straight forward in its coding but might be less intuitive for 
+% direct user application. In both codes, the places for user modifications are clearly marked.
+
+% The 6 sections of "Individual" are as follows:
+% 1: Input data -- load the data from a .txt file into a matrix and define the columns for wavenumbers and absorption data
+% 2: User input: Define phytochrome -- name the phytochrome using a pre-defined handle 
+%     2.5 : Switch case for phytochromes -- tests the phytochrome handle
+% 3: Fit function lsqcurvefit -- fits the experimental data with the appropriate model.
+% 4: Results of lsqcurvefit -- Pfr content is the output
+% 5: Plotting the fit -- plots experimental data and the fit, including the Pfr content
+% 6: Parent state functions -- contains parameters for Gaussians of the parent state functions
+% ====================================================
 
 
 %%  ## 1 ##     ##--- INPUT DATA ---##
