@@ -12,8 +12,9 @@
 
 % The 6 sections of "Individual" are as follows:
 % 1: Input data -- load the data from a .txt file into a matrix and define the columns for wavenumbers and absorption data
-% 2: User input: Define phytochrome -- name the phytochrome using a pre-defined handle 
-%     2.5 : Switch case for phytochromes -- tests the phytochrome handle
+% 2: Fit functions -- defines fittype using the parent state functions. Each phytochrome has its own fittype
+%     2.5 : Global scaling factor -- calculates starting parameter for the scaling constant from the experimental spectrum
+% !!!: In this small section the user defines which fittype and which scaling constant will be used later
 % 3: Fit function lsqcurvefit -- fits the experimental data with the appropriate model.
 % 4: Results of lsqcurvefit -- Pfr content is the output
 % 5: Plotting the fit -- plots experimental data and the fit, including the Pfr content
