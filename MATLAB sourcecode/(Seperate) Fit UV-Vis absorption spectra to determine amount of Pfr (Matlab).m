@@ -1,4 +1,4 @@
-% (Individual) Fit UV-Vis absorption spectra to determine amount of Pfr (Matlab).m
+% (Separate) Fit UV-Vis absorption spectra to determine amount of Pfr (Matlab).m
 %
 %    The source code aims to calculate the Pfr content of a phytochrome from a UV/Vis absorption spectrum. 
 % It is written to explicitly do so for a number of bacterial phytochromes (both bathy and canonical), using
@@ -7,10 +7,10 @@
 % scattering from the Q-band region of the phytochrome. This can then be fitted.
 
 % This code is organised into 6 sections. The "Switch Case" version aims to reduce the amount of changes a user 
-% needs to make, whereas the "Individual" version is straight forward in its coding but might be less intuitive for 
+% needs to make, whereas the "Separate" version is straight forward in its coding but might be less intuitive for 
 % direct user application. In both codes, the places for user modifications are clearly marked.
 
-% The 6 sections of "Individual" are as follows:
+% The 6 sections of "Separate" are as follows:
 % 1: Input data -- load the data from a .txt file into a matrix and define the columns for wavenumbers and absorption data
 % 2: Fit functions -- defines fittype using the parent state functions. Each phytochrome has its own fittype
 %     2.5 : Global scaling factor -- calculates starting parameter for the scaling constant from the experimental spectrum
