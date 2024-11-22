@@ -1,8 +1,8 @@
 This repository contains
   
-  - sourcecode that allows the user to determine the amounts of Pfr (15E) and Pr (15Z) in a microbial phytochrome sample using the data obtained via UV/Vis absorption spectroscopy
+  - sourcecode that allows the user to determine the amounts of Pfr (15E) and Pr (15Z) in a microbial phytochrome sample using the data obtained via UV/Vis absorption spectroscopy.
  
-  - files (.F3D, .OBJ, .STL) with the 3D model of the XXX used in Huber et al. (2024) to illuminate an Eppendorf tube from below.
+  - files (.F3D, .OBJ, .STL) with the 3D model of the XXX used in Huber et al. (2024) to illuminate an Eppendorf tube from below during (in vitro) autokinase assays
 
 The complex, multi-step photocycle of phytochromes can be simplified into a system of two species (Pfr and Pr) and three rates: the rate of product formation for both species, and the mono-directional rate of dark reversion. Is the illumination intensity high enough, the rate of dark reversion becomes negligible in comparison to the photochemical rates; this is the desired experimental condition. A photochemical equilibrium, or photostate, can then be understood as a mixture of Pfr and Pr. 
 
