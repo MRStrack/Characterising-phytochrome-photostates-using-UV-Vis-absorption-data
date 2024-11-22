@@ -156,9 +156,9 @@ kappa = fit_of_data(1);
 % intervals ci for the nonlinear least-squares parameter estimates beta. 
 % Documentation: 
 % https://de.mathworks.com/help/optim/ug/nonlinear-curve-fitting-with-lsqcurvefit.html
-ci = nlparci(fit_der_daten,residuals,'jacobian',jacobian);
+ci = nlparci(fit_of_data,residuals,'jacobian',jacobian);
 conf_ob = ci(2,2);
-agustd = (ci(2)-alpha_wert)/alpha_wert *100;
+agustd = (ci(2)-alpha_value)/alpha_value *100;
 
 %_____________________________________________________________________________________
 %‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾
