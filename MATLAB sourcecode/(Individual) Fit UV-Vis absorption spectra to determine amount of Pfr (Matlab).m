@@ -1,4 +1,4 @@
-% (Switch Case) Fit UV-Vis absorption spectra to determine amount of Pfr (Matlab).m
+% (Individual) Fit UV-Vis absorption spectra to determine amount of Pfr (Matlab).m
 %
 %    The source code aims to calculate the Pfr content of a phytochrome from a UV/Vis absorption spectrum. 
 % It is written to explicitly do so for a number of bacterial phytochromes (both bathy and canonical), using
