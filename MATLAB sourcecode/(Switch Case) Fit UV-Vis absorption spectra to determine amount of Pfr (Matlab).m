@@ -7,7 +7,7 @@
 % scattering from the Q-band region of the phytochrome. This can then be fitted.
 
 % This code is organised into 6 sections. The "Switch Case" version aims to reduce the amount of changes a user 
-% needs to make, whereas the "Individual" version is straight forward in its coding but might be less intuitive for 
+% needs to make, whereas the "Separate" version is straight forward in its coding but might be less intuitive for 
 % direct user application. In both codes, the places for user modifications are clearly marked.
 
 % The 6 sections of "Switch Case" are as follows:
