@@ -195,7 +195,7 @@ legend({'{$\,$}{$\,$}Rohdaten','{$\,$}{$\,$}Fitfunktion'}...
     ,'Location','northwest','FontSize',28,'interpreter','latex'); 
     
 % Adds the value of alpha (Pfr content) to the plot
-str = {'{\textbf{\underline{Anteil Pfr:}}}', '{$\alpha$} =' num2str(alpha_value)}; 
+str = {'{\textbf{\underline{Pfr amount:}}}', '{$\alpha$} =' num2str(alpha_value)}; 
 text(min(x)+1500, max(y_1) - 0.1*max(y_1), str, 'FontSize',18, 'interpreter','latex');    % coordinates of the text box
 
 %_____________________________________________________________________________________
