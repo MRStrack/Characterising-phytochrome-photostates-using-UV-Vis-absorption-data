@@ -152,13 +152,8 @@ end
 
 %% ## 4 ##     ##---  RESULTS of LSQCURVEFIT  ---##
 % The fit calculates the exact values of "alpha" which represents the
-% Pfr content in the sample. "kappa" is the starting value of the scaling
-% constant. It should exactly equal the value of the "const_fit" variable,
-% i.e. the absorbance of your data at the isosbestic point divided by the
-% absorbance of the pure form functions at the isosbestic point. However,
-% to improve goodness of fit and account for discrepancies due to, f.e.,
-% different intervals, the scaling constant is incorporated as a fit
-% parameter.
+% Pfr content in the sample. "kappa" is the fitted value of the scaling
+% constant.
 
 alpha_value = fit_of_data(2);
 kappa = fit_of_data(1);
