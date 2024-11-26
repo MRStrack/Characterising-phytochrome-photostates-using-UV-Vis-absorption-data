@@ -150,19 +150,6 @@ kappa = fit_of_data(1);
 %_____________________________________________________________________________________
 %‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾
 
-%%  ## 4.5 ##                ##---  STANDARD DEVIATION  ---##
-
-%ci = nlparci(beta,r,"Covar",CovB) returns the 95% confidence 
-% intervals ci for the nonlinear least-squares parameter estimates beta. 
-% Documentation: 
-% https://de.mathworks.com/help/optim/ug/nonlinear-curve-fitting-with-lsqcurvefit.html
-ci = nlparci(fit_of_data,residuals,'jacobian',jacobian);
-conf_ob = ci(2,2);
-agustd = (ci(2)-alpha_value)/alpha_value *100;
-
-%_____________________________________________________________________________________
-%‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾
-
 %%  ## 5 ##                ##---  PLOTTING THE FIT  ---##
 % The following section should be adapted by the user for the desired look of your plot.
 % The plot can be used to - at a glance - determine the goodness of fit and if the fit 
