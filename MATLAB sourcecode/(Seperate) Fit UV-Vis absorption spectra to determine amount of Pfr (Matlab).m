@@ -129,7 +129,11 @@ fittype = xccpas9_fittype;
 %‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾
 
 %% ## 3 ##     ##--- FIT FUNCTION LSQCURVEFIT  ---###
-[fit_of_data, resnorm,residuals,exitflag,output,lambda,jacobian] = lsqcurvefit(fittype_def,[const_fit,0.5],x,y_1,[0,0],[inf,1]);
+% This code uses the "lsqcurvefit" which is a nonlinear curve-fitting tool using least-squares.
+% It additionally returns the "resnorm" (squared norm of the residual), "residuals" (residuals = fitfunction(fitparameters,xdata)-ydata),
+% "exitflag" (a value which represents the reason why the solver stopped).
+
+[fit_of_data, resnorm,residuals,exitflag] = lsqcurvefit(fittype_def,[const_fit,0.5],x,y_1,[0,0],[inf,1]);
 
 %_____________________________________________________________________________________
 %‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾
